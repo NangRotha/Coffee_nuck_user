@@ -18,9 +18,9 @@ const ProductCard = ({ product }) => {
     addToCart(product, 1);
   };
 
-  const discount = product.discount_price > 0 && product.price > 0
-    ? Math.round(((product.price - product.discount_price) / product.price) * 100)
-    : 0;
+   const discount = product.price > 0 && product.discount_price < product.price
+     ? Math.round(((product.price - product.discount_price) / product.price) * 100)
+     : 0;
 
   return (
     <motion.div
@@ -98,7 +98,7 @@ const ProductCard = ({ product }) => {
         {/* Price */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            {product.discount_price > 0 && product.discount_price < product.price ? (
+             {product.price > 0 && product.discount_price < product.price ? (
               <div>
                 <span className="text-2xl font-bold text-primary-500">
                   ${product.discount_price?.toFixed(2)}
