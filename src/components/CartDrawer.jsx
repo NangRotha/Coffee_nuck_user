@@ -4,6 +4,7 @@ import { FiX, FiMinus, FiPlus, FiTrash2, FiShoppingBag } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../contexts/CartContext';
 import { API_BASE_URL } from '../api';
+import { formatMoney } from '../utils/format';
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, total, updateQuantity, removeFromCart } = useCart();
@@ -89,9 +90,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                             <FiTrash2 className="text-sm" />
                           </button>
                         </div>
-                        <p className="text-primary-500 font-bold mb-2">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </p>
+                         <p className="text-primary-500 font-bold mb-2">
+                           ${((item.discount_price > 0 && item.discount_price < item.price ? item.discount_price : item.price) * item.quantity).toFixed(2)}
+                         </p>
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}

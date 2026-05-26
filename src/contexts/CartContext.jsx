@@ -29,10 +29,15 @@ export const CartProvider = ({ children }) => {
     calculateTotal();
   }, [cart]);
 
-  const calculateTotal = () => {
-    const newTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    setTotal(newTotal);
-  };
+    const calculateTotal = () => {
+      const newTotal = cart.reduce((sum, item) => {
+        const effectivePrice = (item.price > 0 && item.discount_price > 0 && item.discount_price < item.price) 
+                              ? item.discount_price 
+                              : item.price;
+        return sum + (effectivePrice * item.quantity);
+      }, 0);
+      setTotal(Math.floor(newTotal * 100) / 100);
+    };
 
   const addToCart = (product, quantity = 1) => {
     setCart(prevCart => {

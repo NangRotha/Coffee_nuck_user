@@ -7,6 +7,7 @@ import { orderAPI, paymentAPI, settingsAPI } from '../api';
 import toast from 'react-hot-toast';
 import PaymentModal from '../components/PaymentModal';
 import SuccessModal from '../components/SuccessModal';
+import { formatMoney } from '../utils/format';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -91,13 +92,15 @@ const Checkout = () => {
     setLoading(true);
     
     try {
-      // Prepare order items
-      const orderItems = cart.map(item => ({
-        product_id: item.id,
-        product_name: item.name,
-        quantity: item.quantity,
-        price: item.price
-      }));
+       // Prepare order items
+       const orderItems = cart.map(item => ({
+         product_id: item.id,
+         product_name: item.name,
+         quantity: item.quantity,
+         price: (item.price > 0 && item.discount_price > 0 && item.discount_price < item.price) 
+                ? item.discount_price 
+                : item.price
+       }));
       
       // Create order
       const orderResponse = await orderAPI.create({
@@ -375,27 +378,27 @@ const Checkout = () => {
                       <p className="font-medium text-gray-800">{item.name}</p>
                       <p className="text-xs text-gray-500">Quantity: {item.quantity}</p>
                     </div>
-                    <p className="font-semibold text-gray-800">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
+                     <p className="font-semibold text-gray-800">
+                       ${formatMoney(((item.price > 0 && item.discount_price > 0 && item.discount_price < item.price) ? item.discount_price : item.price) * item.quantity)}
+                     </p>
                   </div>
                 ))}
               </div>
               
               {/* Price Breakdown */}
               <div className="space-y-2 pt-4 border-t">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="text-gray-800">${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Service Fee</span>
-                  <span className="text-gray-800">${serviceFee.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                  <span className="text-gray-800">Total</span>
-                  <span className="text-primary-500">${grandTotal.toFixed(2)}</span>
-                </div>
+                 <div className="flex justify-between text-sm">
+                   <span className="text-gray-600">Subtotal</span>
+                   <span className="text-gray-800">${formatMoney(subtotal)}</span>
+                 </div>
+                 <div className="flex justify-between text-sm">
+                   <span className="text-gray-600">Service Fee</span>
+                   <span className="text-gray-800">${formatMoney(serviceFee)}</span>
+                 </div>
+                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                   <span className="text-gray-800">Total</span>
+                   <span className="text-primary-500">${formatMoney(grandTotal)}</span>
+                 </div>
               </div>
               
               {/* Estimated Info */}

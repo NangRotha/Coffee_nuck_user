@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiCheckCircle, FiShoppingBag, FiClock, FiPrinter, FiHome, FiCoffee } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatMoney } from '../utils/format';
 
 const SuccessModal = ({ isOpen, onClose, orderData }) => {
   useEffect(() => {
@@ -77,16 +78,16 @@ const SuccessModal = ({ isOpen, onClose, orderData }) => {
           <p><strong>Phone:</strong> ${orderData.order?.customer_phone}</p>
         </div>
         <div class="items">
-          ${orderData.order?.items?.map(item => `
-            <div class="item">
-              <span>${item.product_name} x${item.quantity}</span>
-              <span>$${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="total">
-          Total: $${orderData.order?.total_amount?.toFixed(2)}
-        </div>
+           ${orderData.order?.items?.map(item => `
+             <div class="item">
+               <span>${item.product_name} x${item.quantity}</span>
+               <span>$${formatMoney(item.price * item.quantity)}</span>
+             </div>
+           `).join('')}
+         </div>
+         <div class="total">
+           Total: $${formatMoney(orderData.order?.total_amount)}
+         </div>
         <div class="footer">
           <p>Thank you for choosing us!</p>
           <p>Your order will be ready for pickup soon.</p>

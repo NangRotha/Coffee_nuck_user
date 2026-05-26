@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useCart } from '../contexts/CartContext';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../api';
+import { formatMoney } from '../utils/format';
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -18,9 +19,9 @@ const ProductCard = ({ product }) => {
     addToCart(product, 1);
   };
 
-   const discount = product.price > 0 && product.discount_price < product.price
-     ? Math.round(((product.price - product.discount_price) / product.price) * 100)
-     : 0;
+    const discount = product.price > 0 && product.discount_price > 0 && product.discount_price < product.price
+      ? Math.round(((product.price - product.discount_price) / product.price) * 100)
+      : 0;
 
   return (
     <motion.div
@@ -98,20 +99,20 @@ const ProductCard = ({ product }) => {
         {/* Price */}
         <div className="flex items-center justify-between mb-4">
           <div>
-             {product.price > 0 && product.discount_price < product.price ? (
-              <div>
+              {product.price > 0 && product.discount_price > 0 && product.discount_price < product.price ? (
+                <div>
+                  <span className="text-2xl font-bold text-primary-500">
+                    ${formatMoney(product.discount_price)}
+                  </span>
+                  <span className="text-sm text-gray-400 line-through ml-2">
+                    ${formatMoney(product.price)}
+                  </span>
+                </div>
+              ) : (
                 <span className="text-2xl font-bold text-primary-500">
-                  ${product.discount_price?.toFixed(2)}
+                  ${formatMoney(product.price)}
                 </span>
-                <span className="text-sm text-gray-400 line-through ml-2">
-                  ${product.price?.toFixed(2)}
-                </span>
-              </div>
-            ) : (
-              <span className="text-2xl font-bold text-primary-500">
-                ${product.price?.toFixed(2)}
-              </span>
-            )}
+              )}
           </div>
           {product.stock_quantity < 10 && product.stock_quantity > 0 && (
             <span className="text-xs text-orange-500">
